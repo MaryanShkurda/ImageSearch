@@ -13,4 +13,5 @@ import RealmSwift
 class Photo: Object {
     dynamic var keyword = ""
     dynamic var data: Data?
+    dynamic var date: Date?
 }

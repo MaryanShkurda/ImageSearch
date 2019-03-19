@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import RealmSwift
 
 private extension String {
     static let vcTitle = NSLocalizedString("Search", comment: "SearchHistoryVC title")
+    static let searchBarPlaceholder = NSLocalizedString("Type...", comment: "SearchHistoryVC search bar placeholder")
 }
 
 class SearchHistoryVC: UIViewController {
@@ -20,7 +22,7 @@ class SearchHistoryVC: UIViewController {
     
     private let flickrManager = FlickrManager()
     
-    private var photos = [Photo]()
+    private var photos = PersistenceManager.instance.photos()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +35,7 @@ class SearchHistoryVC: UIViewController {
     private func configureSearchBar() {
         searchBar.delegate = self
         searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.placeholder = .searchBarPlaceholder
         self.view.addSubview(searchBar)
         
         let topConstraint = searchBar.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor)
@@ -44,7 +47,6 @@ class SearchHistoryVC: UIViewController {
     
     private func configureTableView() {
         tableView.dataSource = self
-        tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(PhotoCell.self, forCellReuseIdentifier: PhotoCell.ID)
         self.view.addSubview(tableView)
@@ -65,16 +67,14 @@ extension SearchHistoryVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text, !text.isEmpty else { return }
         Spinner.instance.showActivityIndicator(in: self.view)
-        flickrManager.searchPhoto(text: text) { [weak self] (photo, errorString) in
+        flickrManager.searchPhoto(text: text) { [weak self] (errorString) in
             DispatchQueue.main.async {
                 Spinner.instance.hideActivityIndicator()
-                guard let photo = photo else {
-                    self?.showAlert(title: nil, message: errorString)
-                    return
+                if let error = errorString {
+                    self?.showAlert(title: nil, message: error)
+                } else {
+                    self?.tableView.reloadData()
                 }
-                self?.photos.insert(photo, at: 0)
-                self?.tableView.reloadData()
-                print("✅")
             }
         }
     }
@@ -84,11 +84,12 @@ extension SearchHistoryVC: UISearchBarDelegate {
 extension SearchHistoryVC: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photos.count
+        return photos != nil ? photos!.count : 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: PhotoCell.ID, for: indexPath) as? PhotoCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PhotoCell.ID, for: indexPath) as? PhotoCell,
+        let photos = self.photos else {
             return UITableViewCell()
         }
         let photo = photos[indexPath.row]
@@ -96,11 +97,6 @@ extension SearchHistoryVC: UITableViewDataSource {
         cell.photoData = photo.data
         return cell
     }
-    
-}
-
-// MARK: UITableViewDelegate
-extension SearchHistoryVC: UITableViewDelegate {
     
 }
 

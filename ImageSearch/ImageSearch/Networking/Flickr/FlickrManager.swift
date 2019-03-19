@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 private extension String {
     static let noImageMessage = NSLocalizedString("No image found", comment: "No image found message")
@@ -15,37 +16,37 @@ private extension String {
 class FlickrManager {
     
     private let dispatcher: Dispatcher
+    private let persistanceManager: PersistenceManager
     
     init(session: URLSession = URLSession.shared) {
         dispatcher = Dispatcher(session: session)
+        persistanceManager = PersistenceManager.instance
     }
     
-    func searchPhoto(text: String, completion: @escaping (_ photo: Photo?, _ error: String?) -> Void){
-        dispatcher.performRequest(FlickrRequest.search(perPage: 1, page: 0, text: text).asURLRequest()) { (responseData) in
+    func searchPhoto(text: String, completion: @escaping (_ error: String?) -> Void){
+        dispatcher.performRequest(FlickrRequest.search(perPage: 1, page: 0, text: text).asURLRequest()) {
+            [weak self] (responseData) in
             let result = HTTPResponseDecoder.decode(responseData: responseData, type: FlickrResponse.self)
             if let error = result.errorMessage {
-                completion(nil, error)
+                completion(error)
                 return
             }
             guard let photoElement = result.decoded?.data.photoElements.first,
                 let imageURL = photoElement.getURL()
                 else {
-                    completion(nil, "\(String.noImageMessage) for \(text)")
+                    completion("\(String.noImageMessage) for \(text)")
                     return
             }
             
-            var imageData: Data?
+            var imageData: Data!
             do {
                 imageData = try Data(contentsOf: imageURL)
             }catch let error {
-                completion(nil, error.localizedDescription)
+                completion(error.localizedDescription)
                 return
             }
-            
-            let photo = Photo()
-            photo.keyword = text
-            photo.data = imageData
-            completion(photo, nil)
+            self?.persistanceManager.save(photoData: imageData, forKeyword: text)
+            completion(nil)
         }
     }
 }

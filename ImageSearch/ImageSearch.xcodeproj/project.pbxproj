@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		67662984C89B8E3ED856C896 /* Pods_ImageSearch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E537657C4701EB3291AB86B /* Pods_ImageSearch.framework */; };
 		AF0E140D22414C2C00D7B28A /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0E140C22414C2C00D7B28A /* Spinner.swift */; };
+		AF0E141022415B7D00D7B28A /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0E140F22415B7D00D7B28A /* PersistenceManager.swift */; };
 		AFCD6C7B2240003500674B13 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCD6C7A2240003500674B13 /* AppDelegate.swift */; };
 		AFCD6C7D2240003500674B13 /* SearchHistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCD6C7C2240003500674B13 /* SearchHistoryVC.swift */; };
 		AFCD6C822240003700674B13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFCD6C812240003700674B13 /* Assets.xcassets */; };
@@ -32,6 +33,7 @@
 		4E537657C4701EB3291AB86B /* Pods_ImageSearch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ImageSearch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0D85AD53E4475EBF8992F47 /* Pods-ImageSearch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageSearch.release.xcconfig"; path = "Target Support Files/Pods-ImageSearch/Pods-ImageSearch.release.xcconfig"; sourceTree = "<group>"; };
 		AF0E140C22414C2C00D7B28A /* Spinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
+		AF0E140F22415B7D00D7B28A /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
 		AFCD6C772240003500674B13 /* ImageSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFCD6C7A2240003500674B13 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AFCD6C7C2240003500674B13 /* SearchHistoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHistoryVC.swift; sourceTree = "<group>"; };
@@ -81,6 +83,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		AF0E140E22415B5A00D7B28A /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				AF0E140F22415B7D00D7B28A /* PersistenceManager.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
 		AFCD6C6E2240003400674B13 = {
 			isa = PBXGroup;
 			children = (
@@ -102,6 +112,7 @@
 		AFCD6C792240003500674B13 /* ImageSearch */ = {
 			isa = PBXGroup;
 			children = (
+				AF0E140E22415B5A00D7B28A /* Persistence */,
 				AFCD6CAF2241262600674B13 /* Model */,
 				AFCD6C9222411F4F00674B13 /* Networking */,
 				AFCD6C8D2240F10400674B13 /* View */,
@@ -320,6 +331,7 @@
 				AFCD6CB52241384600674B13 /* Photo.swift in Sources */,
 				AFCD6CA222411F4F00674B13 /* FlickrManager.swift in Sources */,
 				AFCD6CB12241263E00674B13 /* PhotoElement.swift in Sources */,
+				AF0E141022415B7D00D7B28A /* PersistenceManager.swift in Sources */,
 				AFCD6CAA22411F4F00674B13 /* Request.swift in Sources */,
 				AF0E140D22414C2C00D7B28A /* Spinner.swift in Sources */,
 				AFCD6CA622411F4F00674B13 /* NetworkResponse.swift in Sources */,
@@ -470,15 +482,18 @@
 			baseConfigurationReference = 47BC4E39345FAD3B47EFAD97 /* Pods-ImageSearch.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = G64WD3CKJY;
 				INFOPLIST_FILE = ImageSearch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.ImageSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -489,15 +504,18 @@
 			baseConfigurationReference = A0D85AD53E4475EBF8992F47 /* Pods-ImageSearch.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = G64WD3CKJY;
 				INFOPLIST_FILE = ImageSearch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.ImageSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
