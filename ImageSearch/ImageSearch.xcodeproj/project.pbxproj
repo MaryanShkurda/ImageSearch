@@ -11,6 +11,7 @@
 		AFCD6C7D2240003500674B13 /* SearchHistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCD6C7C2240003500674B13 /* SearchHistoryVC.swift */; };
 		AFCD6C822240003700674B13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFCD6C812240003700674B13 /* Assets.xcassets */; };
 		AFCD6C852240003700674B13 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AFCD6C832240003700674B13 /* LaunchScreen.storyboard */; };
+		AFCD6C8F2240F12E00674B13 /* PhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCD6C8E2240F12E00674B13 /* PhotoCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		AFCD6C812240003700674B13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AFCD6C842240003700674B13 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AFCD6C862240003700674B13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AFCD6C8E2240F12E00674B13 /* PhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,13 +54,30 @@
 		AFCD6C792240003500674B13 /* ImageSearch */ = {
 			isa = PBXGroup;
 			children = (
+				AFCD6C8D2240F10400674B13 /* View */,
+				AFCD6C8C2240ECB200674B13 /* Controller */,
 				AFCD6C7A2240003500674B13 /* AppDelegate.swift */,
-				AFCD6C7C2240003500674B13 /* SearchHistoryVC.swift */,
 				AFCD6C812240003700674B13 /* Assets.xcassets */,
 				AFCD6C832240003700674B13 /* LaunchScreen.storyboard */,
 				AFCD6C862240003700674B13 /* Info.plist */,
 			);
 			path = ImageSearch;
+			sourceTree = "<group>";
+		};
+		AFCD6C8C2240ECB200674B13 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				AFCD6C7C2240003500674B13 /* SearchHistoryVC.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		AFCD6C8D2240F10400674B13 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				AFCD6C8E2240F12E00674B13 /* PhotoCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -132,6 +151,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFCD6C7D2240003500674B13 /* SearchHistoryVC.swift in Sources */,
+				AFCD6C8F2240F12E00674B13 /* PhotoCell.swift in Sources */,
 				AFCD6C7B2240003500674B13 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

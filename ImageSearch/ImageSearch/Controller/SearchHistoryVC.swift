@@ -9,7 +9,7 @@
 import UIKit
 
 private extension String {
-    static let vcTitle = "Search"
+    static let vcTitle = NSLocalizedString("Search", comment: "SearchHistoryVC title")
 }
 
 class SearchHistoryVC: UIViewController {
@@ -39,7 +39,9 @@ class SearchHistoryVC: UIViewController {
     
     private func configureTableView() {
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(PhotoCell.self, forCellReuseIdentifier: PhotoCell.ID)
         self.view.addSubview(tableView)
         
         tableView.keyboardDismissMode = .interactive
@@ -57,7 +59,7 @@ class SearchHistoryVC: UIViewController {
 extension SearchHistoryVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text, !text.isEmpty else { return }
-
+        
     }
 }
 
@@ -69,7 +71,15 @@ extension SearchHistoryVC: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PhotoCell.ID, for: indexPath) as? PhotoCell else {
+            return UITableViewCell()
+        }
+        return cell
     }
+    
+}
+
+// MARK: UITableViewDelegate
+extension SearchHistoryVC: UITableViewDelegate {
     
 }
