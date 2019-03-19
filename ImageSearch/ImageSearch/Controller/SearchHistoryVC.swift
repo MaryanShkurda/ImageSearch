@@ -14,8 +14,13 @@ private extension String {
 
 class SearchHistoryVC: UIViewController {
     
-    private var searchBar = UISearchBar()
-    private var tableView = UITableView()
+    private let searchBar = UISearchBar()
+    private let tableView = UITableView()
+    private let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+    
+    private let flickrManager = FlickrManager()
+    
+    private var photos = [Photo]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +64,19 @@ class SearchHistoryVC: UIViewController {
 extension SearchHistoryVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text, !text.isEmpty else { return }
-        
+        Spinner.instance.showActivityIndicator(in: self.view)
+        flickrManager.searchPhoto(text: text) { [weak self] (photo, errorString) in
+            DispatchQueue.main.async {
+                Spinner.instance.hideActivityIndicator()
+                guard let photo = photo else {
+                    self?.showAlert(title: nil, message: errorString)
+                    return
+                }
+                self?.photos.insert(photo, at: 0)
+                self?.tableView.reloadData()
+                print("✅")
+            }
+        }
     }
 }
 
@@ -67,13 +84,16 @@ extension SearchHistoryVC: UISearchBarDelegate {
 extension SearchHistoryVC: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return photos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PhotoCell.ID, for: indexPath) as? PhotoCell else {
             return UITableViewCell()
         }
+        let photo = photos[indexPath.row]
+        cell.keyword = photo.keyword
+        cell.photoData = photo.data
         return cell
     }
     
@@ -82,4 +102,15 @@ extension SearchHistoryVC: UITableViewDataSource {
 // MARK: UITableViewDelegate
 extension SearchHistoryVC: UITableViewDelegate {
     
+}
+
+extension UIViewController {
+    func showAlert(title: String?, message: String?) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ok", style: .default, handler: {_ in
+            alert.dismiss(animated: true, completion: nil)
+        })
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
 }

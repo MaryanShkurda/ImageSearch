@@ -8,6 +8,10 @@
 
 import Foundation
 
+private extension String {
+    static let noImageMessage = NSLocalizedString("No image found", comment: "No image found message")
+}
+
 class FlickrManager {
     
     private let dispatcher: Dispatcher
@@ -16,14 +20,32 @@ class FlickrManager {
         dispatcher = Dispatcher(session: session)
     }
     
-    func searchPhoto(text: String, completion: @escaping (_ photos: PhotosData?, _ error: String?) -> Void){
+    func searchPhoto(text: String, completion: @escaping (_ photo: Photo?, _ error: String?) -> Void){
         dispatcher.performRequest(FlickrRequest.search(perPage: 1, page: 0, text: text).asURLRequest()) { (responseData) in
             let result = HTTPResponseDecoder.decode(responseData: responseData, type: FlickrResponse.self)
-            if let photoElement = result.decoded?.data.photoElements.first, let imageURL = photoElement.getURL() {
-                if let imageData = try? Data(contentsOf: imageURL) {
-                    
-                }
+            if let error = result.errorMessage {
+                completion(nil, error)
+                return
             }
+            guard let photoElement = result.decoded?.data.photoElements.first,
+                let imageURL = photoElement.getURL()
+                else {
+                    completion(nil, "\(String.noImageMessage) for \(text)")
+                    return
+            }
+            
+            var imageData: Data?
+            do {
+                imageData = try Data(contentsOf: imageURL)
+            }catch let error {
+                completion(nil, error.localizedDescription)
+                return
+            }
+            
+            let photo = Photo()
+            photo.keyword = text
+            photo.data = imageData
+            completion(photo, nil)
         }
     }
 }
