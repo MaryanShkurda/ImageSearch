@@ -18,6 +18,7 @@ class SearchHistoryVC: UIViewController {
     
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
+    private var tableViewBottomConstraint: NSLayoutConstraint?
     private let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     
     private let flickrManager = FlickrManager()
@@ -25,6 +26,7 @@ class SearchHistoryVC: UIViewController {
     private var photos = PersistenceManager.instance.photos()
     var notificationToken: NotificationToken?
     
+    // MARK: UIViewController life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -32,8 +34,14 @@ class SearchHistoryVC: UIViewController {
         configureSearchBar()
         configureTableView()
         observeDataSourceChanged()
+        registerForKeyboardNotifications()
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: Configure subviews
     private func configureSearchBar() {
         searchBar.delegate = self
         searchBar.translatesAutoresizingMaskIntoConstraints = false
@@ -57,12 +65,14 @@ class SearchHistoryVC: UIViewController {
         
         let topConstraint = tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor)
         let bottomConstraint = tableView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+        self.tableViewBottomConstraint = bottomConstraint
         let leadingConstraint = tableView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
         let trailingConstraint = tableView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
         
         NSLayoutConstraint.activate([leadingConstraint, topConstraint, trailingConstraint, bottomConstraint])
     }
     
+    // MARK: handle data source changes
     private func observeDataSourceChanged() {
         notificationToken = photos?.observe({ [weak self](changes) in
             switch changes {
@@ -83,6 +93,20 @@ class SearchHistoryVC: UIViewController {
                 break
             }
         })
+    }
+    
+    // MARK: handle keyboard notifications
+    private func registerForKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotifications),
+                                               name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardNotifications),
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc private func handleKeyboardNotifications(notification: Notification) {
+        guard let keyboardHeight = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?
+            .cgRectValue.height, let bottomConstraint = self.tableViewBottomConstraint else { return }
+        bottomConstraint.constant = -keyboardHeight
     }
 }
 
