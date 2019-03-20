@@ -23,6 +23,7 @@ class SearchHistoryVC: UIViewController {
     private let flickrManager = FlickrManager()
     
     private var photos = PersistenceManager.instance.photos()
+    var notificationToken: NotificationToken?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +31,7 @@ class SearchHistoryVC: UIViewController {
         title = .vcTitle
         configureSearchBar()
         configureTableView()
+        observeDataSourceChanged()
     }
     
     private func configureSearchBar() {
@@ -60,6 +62,28 @@ class SearchHistoryVC: UIViewController {
         
         NSLayoutConstraint.activate([leadingConstraint, topConstraint, trailingConstraint, bottomConstraint])
     }
+    
+    private func observeDataSourceChanged() {
+        notificationToken = photos?.observe({ [weak self](changes) in
+            switch changes {
+            case .initial:
+                self?.tableView.reloadData()
+                break
+            case .update(_, let deletions, let insertions, let modifications):
+                self?.tableView.beginUpdates()
+                self?.tableView.insertRows(at: insertions.map { IndexPath(row: $0, section: 0) },
+                                           with: .automatic)
+                self?.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0) },
+                                           with: .automatic)
+                self?.tableView.reloadRows(at: modifications.map { IndexPath(row: $0, section: 0) },
+                                           with: .automatic)
+                self?.tableView.endUpdates()
+                break
+            case .error:
+                break
+            }
+        })
+    }
 }
 
 // MARK: UISearchBarDelegate
@@ -72,8 +96,6 @@ extension SearchHistoryVC: UISearchBarDelegate {
                 Spinner.instance.hideActivityIndicator()
                 if let error = errorString {
                     self?.showAlert(title: nil, message: error)
-                } else {
-                    self?.tableView.reloadData()
                 }
             }
         }
